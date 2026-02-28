@@ -26,6 +26,16 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import Markdown from 'react-markdown';
 import { analyzeCryptoNews, type AnalysisResult } from './services/gemini';
+import { LANGUAGES } from './constants/languages';
+
+declare global {
+  interface Window {
+    aistudio?: {
+      hasSelectedApiKey: () => Promise<boolean>;
+      openSelectKey: () => Promise<void>;
+    };
+  }
+}
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,8 +51,21 @@ export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(true);
+  const [selectedLanguage, setSelectedLanguage] = useState('Auto-detect');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    const checkApiKey = async () => {
+      if (window.aistudio) {
+        const selected = await window.aistudio.hasSelectedApiKey();
+        setHasApiKey(selected);
+      }
+    };
+    checkApiKey();
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,7 +88,7 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const analysis = await analyzeCryptoNews(input, image || undefined);
+      const analysis = await analyzeCryptoNews(input, image || undefined, selectedLanguage);
       setResult(analysis);
     } catch (err) {
       console.error(err);
@@ -96,8 +119,37 @@ export default function App() {
     setShowLoginModal(false);
   };
 
+  const handleOpenKeySelector = async () => {
+    if (window.aistudio) {
+      await window.aistudio.openSelectKey();
+      setHasApiKey(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900">
+      {/* API Key Banner */}
+      {!hasApiKey && (
+        <div className="bg-indigo-600 text-white py-3 px-4 text-center text-sm font-bold flex items-center justify-center gap-4 sticky top-0 z-[60] shadow-lg">
+          <Zap className="w-4 h-4 fill-white animate-pulse" />
+          <span>Gemini 3 Intelligence requires a valid API key.</span>
+          <button 
+            onClick={handleOpenKeySelector}
+            className="bg-white text-indigo-600 px-4 py-1 rounded-full hover:bg-indigo-50 transition-colors shadow-sm"
+          >
+            Select API Key
+          </button>
+          <a 
+            href="https://ai.google.dev/gemini-api/docs/billing" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="underline opacity-80 hover:opacity-100 transition-opacity"
+          >
+            Billing Docs
+          </a>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
@@ -123,10 +175,13 @@ export default function App() {
             </nav>
             <div className="h-6 w-px bg-slate-200" />
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              <button 
+                onClick={() => setShowLanguageModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-full text-[11px] font-bold text-slate-600 uppercase tracking-wider transition-colors"
+              >
                 <Languages className="w-3.5 h-3.5 text-indigo-500" />
-                Multilingual
-              </div>
+                {selectedLanguage}
+              </button>
               <button 
                 onClick={toggleLogin}
                 className={cn(
@@ -183,6 +238,16 @@ export default function App() {
                   <a href="#" className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg">
                     Safety Tips <ChevronRight className="w-4 h-4 opacity-40" />
                   </a>
+                  <button 
+                    onClick={() => { setShowLanguageModal(true); setIsMobileMenuOpen(false); }}
+                    className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg w-full text-left"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Languages className="w-4 h-4 text-indigo-500" />
+                      Language: {selectedLanguage}
+                    </span>
+                    <ChevronRight className="w-4 h-4 opacity-40" />
+                  </button>
                 </nav>
                 <div className="pt-4 border-t border-slate-100">
                   <button 
@@ -730,6 +795,74 @@ export default function App() {
               >
                 <X className="w-6 h-6" />
               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Language Modal */}
+      <AnimatePresence>
+        {showLanguageModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLanguageModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-3xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col"
+            >
+              <div className="p-8 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center">
+                    <Languages className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tight">Select Language</h3>
+                    <p className="text-sm text-slate-500 font-medium">Choose the output language for your analysis.</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowLanguageModal(false)}
+                  className="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang}
+                      onClick={() => {
+                        setSelectedLanguage(lang);
+                        setShowLanguageModal(false);
+                      }}
+                      className={cn(
+                        "px-4 py-3 rounded-xl text-sm font-bold transition-all text-left flex items-center justify-between group",
+                        selectedLanguage === lang 
+                          ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100" 
+                          : "bg-slate-50 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600"
+                      )}
+                    >
+                      {lang}
+                      {selectedLanguage === lang && <ShieldCheck className="w-4 h-4" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-50 border-t border-slate-100 text-center shrink-0">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Currently Selected: <span className="text-indigo-600">{selectedLanguage}</span>
+                </p>
+              </div>
             </motion.div>
           </div>
         )}

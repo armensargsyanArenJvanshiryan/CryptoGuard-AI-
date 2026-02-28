@@ -1,7 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-
 export interface AnalysisResult {
   summary: string;
   riskLevel: "LOW" | "MEDIUM" | "HIGH";
@@ -11,7 +9,12 @@ export interface AnalysisResult {
   keyTakeaways: string[];
 }
 
-export async function analyzeCryptoNews(newsText: string, imageBase64?: string): Promise<AnalysisResult> {
+export async function analyzeCryptoNews(newsText: string, imageBase64?: string, targetLanguage: string = "Auto-detect"): Promise<AnalysisResult> {
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("API key is not set. Please select an API key or check your environment variables.");
+  }
+  const ai = new GoogleGenAI({ apiKey });
   const parts: any[] = [];
   
   if (newsText) {
@@ -32,18 +35,22 @@ export async function analyzeCryptoNews(newsText: string, imageBase64?: string):
     }
   }
 
+  const languageInstruction = targetLanguage === "Auto-detect" 
+    ? "Provide the response (summary, reasons, takeaways) in the SAME language as the input news/image."
+    : `Provide the response (summary, reasons, takeaways) in ${targetLanguage}.`;
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: { parts },
     config: {
-      systemInstruction: "You are a professional crypto analyst and security expert. Your goal is to simplify complex crypto news for beginners, assess the risk level of the mentioned project or news, and detect potential scams or red flags. You can analyze text and images in ANY language. IMPORTANT: Provide the response (summary, reasons, takeaways) in the SAME language as the input news/image. Be objective and cautious.",
+      systemInstruction: `You are a professional crypto analyst and security expert. Your goal is to simplify complex crypto news for beginners, assess the risk level of the mentioned project or news, and detect potential scams or red flags. You can analyze text and images in ANY language. IMPORTANT: ${languageInstruction} Be objective and cautious.`,
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
         properties: {
           summary: {
             type: Type.STRING,
-            description: "A simple, easy-to-understand explanation of the news in the same language as the input.",
+            description: "A simple, easy-to-understand explanation of the news in the target language.",
           },
           riskLevel: {
             type: Type.STRING,
@@ -52,7 +59,7 @@ export async function analyzeCryptoNews(newsText: string, imageBase64?: string):
           },
           riskReason: {
             type: Type.STRING,
-            description: "The reason for the assigned risk level in the same language as the input.",
+            description: "The reason for the assigned risk level in the target language.",
           },
           isScamLikely: {
             type: Type.BOOLEAN,
@@ -60,12 +67,12 @@ export async function analyzeCryptoNews(newsText: string, imageBase64?: string):
           },
           scamWarning: {
             type: Type.STRING,
-            description: "Specific red flags or warnings if a scam is suspected in the same language as the input.",
+            description: "Specific red flags or warnings if a scam is suspected in the target language.",
           },
           keyTakeaways: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
-            description: "3-5 key points from the news in the same language as the input.",
+            description: "3-5 key points from the news in the target language.",
           },
         },
         required: ["summary", "riskLevel", "riskReason", "isScamLikely", "scamWarning", "keyTakeaways"],
