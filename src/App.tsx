@@ -19,7 +19,9 @@ import {
   User,
   LogOut,
   Menu,
-  ChevronRight
+  ChevronRight,
+  Code,
+  BarChart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -53,6 +55,8 @@ export default function App() {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
+  const [showApiModal, setShowApiModal] = useState(false);
+  const [showMarketScanModal, setShowMarketScanModal] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState('Auto-detect');
@@ -1022,6 +1026,190 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* API Modal */}
+      <AnimatePresence>
+        {showApiModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowApiModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 sm:p-12 space-y-10">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-200">
+                    <Code className="text-white w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight">Developer API Access</h3>
+                  <p className="text-slate-600 text-lg leading-relaxed font-medium">
+                    Integrate CryptoGuard's neural intelligence directly into your dApps, wallets, or exchanges.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="p-6 bg-slate-900 rounded-3xl border border-slate-800 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-black text-indigo-400 uppercase tracking-widest">Authentication</h4>
+                      <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 rounded text-[10px] font-bold uppercase">Bearer Token</span>
+                    </div>
+                    <p className="text-sm text-slate-400 leading-relaxed">
+                      All API requests require a valid API key passed in the header.
+                    </p>
+                    <div className="bg-black/50 p-4 rounded-xl font-mono text-xs text-slate-300 overflow-x-auto">
+                      Authorization: Bearer cg_live_xxxxxxxx
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest px-1">Core Endpoints</h4>
+                    
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">POST</span>
+                        <code className="text-sm font-bold text-slate-700">/v1/analyze/text</code>
+                      </div>
+                      <p className="text-xs text-slate-500">Submit news text for risk assessment and summary.</p>
+                    </div>
+
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">POST</span>
+                        <code className="text-sm font-bold text-slate-700">/v1/analyze/image</code>
+                      </div>
+                      <p className="text-xs text-slate-500">Upload base64 images for visual threat detection.</p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-900 uppercase tracking-widest">Enterprise Limits</h4>
+                    <p className="text-sm text-indigo-800 leading-relaxed">
+                      Standard keys are rate-limited to 100 requests/minute. For high-frequency trading bot integration, please contact sales.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={() => setShowApiModal(false)}
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                  >
+                    Request API Key
+                  </button>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowApiModal(false)}
+                className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Market Scan Modal */}
+      <AnimatePresence>
+        {showMarketScanModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMarketScanModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 sm:p-12 space-y-10">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-200">
+                    <BarChart className="text-white w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight">Market Scan</h3>
+                  <p className="text-slate-600 text-lg leading-relaxed font-medium">
+                    Our Market Scan provides a clear, data-driven overview of your target market to support informed decision-making and strategic growth.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">What We Analyze</h4>
+                    <ul className="space-y-3">
+                      <li className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+                        <p className="text-sm text-slate-600 leading-relaxed"><strong className="text-slate-900">Market Size & Growth Trends</strong> – Current valuation, historical growth, and future projections</p>
+                      </li>
+                      <li className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+                        <p className="text-sm text-slate-600 leading-relaxed"><strong className="text-slate-900">Customer Segmentation</strong> – Target audiences, behaviors, and demand drivers</p>
+                      </li>
+                      <li className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+                        <p className="text-sm text-slate-600 leading-relaxed"><strong className="text-slate-900">Competitive Landscape</strong> – Key players, positioning, strengths, and gaps</p>
+                      </li>
+                      <li className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+                        <p className="text-sm text-slate-600 leading-relaxed"><strong className="text-slate-900">Industry Trends</strong> – Emerging technologies, regulatory shifts, and innovation patterns</p>
+                      </li>
+                      <li className="flex gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 shrink-0" />
+                        <p className="text-sm text-slate-600 leading-relaxed"><strong className="text-slate-900">Opportunities & Risks</strong> – White space opportunities and potential barriers to entry</p>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="p-6 bg-indigo-50 rounded-3xl border border-indigo-100 space-y-4">
+                    <h4 className="text-sm font-black text-indigo-900 uppercase tracking-widest">What You Receive</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        "Executive summary with key insights",
+                        "Market data and trend analysis",
+                        "Competitive benchmarking overview",
+                        "Strategic recommendations",
+                        "Clear, actionable next steps"
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
+                          <span className="text-sm text-indigo-900 font-medium">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={() => setShowMarketScanModal(false)}
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                  >
+                    Start Market Analysis
+                  </button>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowMarketScanModal(false)}
+                className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1041,9 +1229,9 @@ export default function App() {
               <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs mb-6">Platform</h4>
               <ul className="space-y-4 text-sm font-bold text-slate-400">
                 <li><a href="#" className="hover:text-indigo-600 transition-colors">Neural Engine</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Market Scan</a></li>
+                <li><button onClick={() => setShowMarketScanModal(true)} className="hover:text-indigo-600 transition-colors">Market Scan</button></li>
                 <li><button onClick={() => setShowSafetyModal(true)} className="hover:text-indigo-600 transition-colors">Safety Tips</button></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">API Access</a></li>
+                <li><button onClick={() => setShowApiModal(true)} className="hover:text-indigo-600 transition-colors">API Access</button></li>
               </ul>
             </div>
             <div>
