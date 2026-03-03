@@ -170,12 +170,6 @@ export default function App() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <nav className="flex items-center gap-6 text-sm font-medium text-slate-500">
-              <a href="#" className="hover:text-indigo-600 transition-colors">Dashboard</a>
-              <button onClick={() => setShowAboutModal(true)} className="hover:text-indigo-600 transition-colors">About Us</button>
-              <a href="#" className="hover:text-indigo-600 transition-colors">Safety Tips</a>
-            </nav>
-            <div className="h-6 w-px bg-slate-200" />
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setShowLanguageModal(true)}
@@ -228,18 +222,6 @@ export default function App() {
             >
               <div className="px-4 py-6 space-y-4">
                 <nav className="flex flex-col gap-4 text-base font-medium text-slate-600">
-                  <a href="#" className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg">
-                    Dashboard <ChevronRight className="w-4 h-4 opacity-40" />
-                  </a>
-                  <button 
-                    onClick={() => { setShowAboutModal(true); setIsMobileMenuOpen(false); }}
-                    className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg w-full text-left"
-                  >
-                    About Us <ChevronRight className="w-4 h-4 opacity-40" />
-                  </button>
-                  <a href="#" className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg">
-                    Safety Tips <ChevronRight className="w-4 h-4 opacity-40" />
-                  </a>
                   <button 
                     onClick={() => { setShowLanguageModal(true); setIsMobileMenuOpen(false); }}
                     className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg w-full text-left"
