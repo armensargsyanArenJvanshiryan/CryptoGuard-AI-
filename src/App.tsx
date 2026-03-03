@@ -21,7 +21,8 @@ import {
   Menu,
   ChevronRight,
   Code,
-  BarChart
+  BarChart,
+  Brain
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -57,6 +58,7 @@ export default function App() {
   const [showSafetyModal, setShowSafetyModal] = useState(false);
   const [showApiModal, setShowApiModal] = useState(false);
   const [showMarketScanModal, setShowMarketScanModal] = useState(false);
+  const [showNeuralEngineModal, setShowNeuralEngineModal] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState('Auto-detect');
@@ -1210,6 +1212,109 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Neural Engine Modal */}
+      <AnimatePresence>
+        {showNeuralEngineModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowNeuralEngineModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 sm:p-12 space-y-10">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-200">
+                    <Brain className="text-white w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight">Neural Engine</h3>
+                  <p className="text-slate-600 text-lg leading-relaxed font-medium">
+                    The core of CryptoGuard AI. Our proprietary neural networks process millions of data points to detect threats before they happen.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">Core Capabilities</h4>
+                    <div className="grid gap-4">
+                      <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                          <Search className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-slate-900">Pattern Recognition</h5>
+                          <p className="text-sm text-slate-500 mt-1">Identifies wash trading, pump-and-dump schemes, and suspicious wallet clusters in real-time.</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                          <ImageIcon className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-slate-900">Visual Analysis</h5>
+                          <p className="text-sm text-slate-500 mt-1">Scans charts, screenshots, and promotional images for manipulated data and deepfake indicators.</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                          <Languages className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-slate-900">Multilingual NLP</h5>
+                          <p className="text-sm text-slate-500 mt-1">Processes news and social sentiment in over 100 languages to capture global market movements.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 bg-indigo-900 rounded-3xl border border-indigo-800 space-y-4 text-white">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-black text-indigo-300 uppercase tracking-widest">System Status</h4>
+                      <span className="flex items-center gap-2 px-2 py-1 bg-emerald-500/20 text-emerald-300 rounded text-[10px] font-bold uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Operational
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                      <div className="p-4 bg-white/5 rounded-2xl">
+                        <div className="text-2xl font-black">99.9%</div>
+                        <div className="text-xs text-indigo-300 font-bold uppercase tracking-wider mt-1">Accuracy</div>
+                      </div>
+                      <div className="p-4 bg-white/5 rounded-2xl">
+                        <div className="text-2xl font-black">50ms</div>
+                        <div className="text-xs text-indigo-300 font-bold uppercase tracking-wider mt-1">Latency</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={() => setShowNeuralEngineModal(false)}
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                  >
+                    Explore Capabilities
+                  </button>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowNeuralEngineModal(false)}
+                className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1228,7 +1333,7 @@ export default function App() {
             <div>
               <h4 className="font-black text-slate-900 uppercase tracking-widest text-xs mb-6">Platform</h4>
               <ul className="space-y-4 text-sm font-bold text-slate-400">
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Neural Engine</a></li>
+                <li><button onClick={() => setShowNeuralEngineModal(true)} className="hover:text-indigo-600 transition-colors">Neural Engine</button></li>
                 <li><button onClick={() => setShowMarketScanModal(true)} className="hover:text-indigo-600 transition-colors">Market Scan</button></li>
                 <li><button onClick={() => setShowSafetyModal(true)} className="hover:text-indigo-600 transition-colors">Safety Tips</button></li>
                 <li><button onClick={() => setShowApiModal(true)} className="hover:text-indigo-600 transition-colors">API Access</button></li>
