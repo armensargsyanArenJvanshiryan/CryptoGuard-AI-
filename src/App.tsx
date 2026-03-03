@@ -51,6 +51,8 @@ export default function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showSafetyModal, setShowSafetyModal] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState('Auto-detect');
@@ -508,6 +510,27 @@ export default function App() {
                     </motion.div>
                   </div>
 
+                  {/* Generated Image */}
+                  {result?.generatedImage && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="rounded-[32px] overflow-hidden shadow-2xl shadow-indigo-100 border border-slate-200"
+                    >
+                      <div className="relative aspect-video w-full bg-slate-100">
+                        <img 
+                          src={result.generatedImage} 
+                          alt="AI Generated Visualization" 
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg text-indigo-900 text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                          <ImageIcon className="w-3 h-3 text-indigo-600" />
+                          Visual Intelligence
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Summary */}
                   <div className="bg-white border border-slate-200 rounded-[40px] p-8 sm:p-12 shadow-2xl shadow-slate-100 space-y-10">
                     <div className="space-y-6">
@@ -800,6 +823,155 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Terms Modal */}
+      <AnimatePresence>
+        {showTermsModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowTermsModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 sm:p-12 space-y-10">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-200">
+                    <ShieldCheck className="text-white w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight">Terms of Service</h3>
+                  <p className="text-slate-600 text-lg leading-relaxed font-medium">
+                    By accessing CryptoGuard AI, you agree to the following terms governing the use of our intelligence platform.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">1. Usage License</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      CryptoGuard AI grants you a limited, non-exclusive license to use our analysis tools for personal or research purposes. Automated scraping or commercial resale of our data is strictly prohibited.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">2. Disclaimer of Liability</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Our AI analysis is provided for informational purposes only and does not constitute financial advice. CryptoGuard AI is not responsible for any investment losses incurred based on our reports.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">3. Service Availability</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      We strive for 99.9% uptime but do not guarantee uninterrupted access. Maintenance windows and API rate limits may affect service availability.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={() => setShowTermsModal(false)}
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                  >
+                    Accept Terms
+                  </button>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowTermsModal(false)}
+                className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Safety Modal */}
+      <AnimatePresence>
+        {showSafetyModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSafetyModal(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8 sm:p-12 space-y-10">
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-200">
+                    <ShieldCheck className="text-white w-8 h-8" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 tracking-tight">Account Safety Tips</h3>
+                  <p className="text-slate-600 text-lg leading-relaxed font-medium">
+                    Protecting your account and data is our top priority. Follow these guidelines to ensure maximum security while using CryptoGuard AI.
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">1. Strong Authentication</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Always use a strong, unique password for your account. We recommend using a password manager to generate and store complex credentials.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">2. Phishing Awareness</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Be cautious of emails or messages claiming to be from CryptoGuard AI asking for your password or private keys. We will NEVER ask for your private keys or seed phrases.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">3. Secure Connection</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Ensure you are accessing our platform via the official HTTPS URL. Check for the padlock icon in your browser's address bar before logging in.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-3">
+                    <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">4. Device Security</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Keep your device's operating system and browser up to date. Avoid using public Wi-Fi networks for sensitive crypto activities without a VPN.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 text-center">
+                  <button 
+                    onClick={() => setShowSafetyModal(false)}
+                    className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-xl shadow-slate-200"
+                  >
+                    I Understand
+                  </button>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowSafetyModal(false)}
+                className="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Language Modal */}
       <AnimatePresence>
         {showLanguageModal && (
@@ -888,6 +1060,7 @@ export default function App() {
               <ul className="space-y-4 text-sm font-bold text-slate-400">
                 <li><a href="#" className="hover:text-indigo-600 transition-colors">Neural Engine</a></li>
                 <li><a href="#" className="hover:text-indigo-600 transition-colors">Market Scan</a></li>
+                <li><button onClick={() => setShowSafetyModal(true)} className="hover:text-indigo-600 transition-colors">Safety Tips</button></li>
                 <li><a href="#" className="hover:text-indigo-600 transition-colors">API Access</a></li>
               </ul>
             </div>
@@ -896,7 +1069,7 @@ export default function App() {
               <ul className="space-y-4 text-sm font-bold text-slate-400">
                 <li><button onClick={() => setShowAboutModal(true)} className="hover:text-indigo-600 transition-colors">About Us</button></li>
                 <li><button onClick={() => setShowPrivacyModal(true)} className="hover:text-indigo-600 transition-colors">Privacy</button></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Terms</a></li>
+                <li><button onClick={() => setShowTermsModal(true)} className="hover:text-indigo-600 transition-colors">Terms</button></li>
               </ul>
             </div>
           </div>

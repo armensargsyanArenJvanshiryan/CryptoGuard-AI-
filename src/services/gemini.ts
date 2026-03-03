@@ -7,6 +7,7 @@ export interface AnalysisResult {
   isScamLikely: boolean;
   scamWarning: string;
   keyTakeaways: string[];
+  generatedImage?: string;
 }
 
 export async function analyzeCryptoNews(newsText: string, imageBase64?: string, targetLanguage: string = "Auto-detect"): Promise<AnalysisResult> {
@@ -80,6 +81,35 @@ export async function analyzeCryptoNews(newsText: string, imageBase64?: string, 
     },
   });
 
-  const result = JSON.parse(response.text || "{}");
-  return result as AnalysisResult;
+  const result = JSON.parse(response.text || "{}") as AnalysisResult;
+
+  // Generate illustrative image
+  try {
+    let promptPrefix = "A futuristic 3D render of a cryptocurrency coin or token.";
+    if (result.riskLevel === 'HIGH' || result.isScamLikely) {
+      promptPrefix = "A dramatic, warning visualization of a crypto scam, red neon, danger, digital security threat, glitch effect.";
+    } else {
+      promptPrefix = "A high-quality, futuristic digital art illustration of a promising cryptocurrency project, blue and purple neon, success, blockchain technology, clean 3D render.";
+    }
+    
+    // Truncate summary to avoid token limits and keep prompt focused
+    const imagePrompt = `${promptPrefix} Context: ${result.summary.slice(0, 200)}`;
+
+    const imageResponse = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-image',
+      contents: { parts: [{ text: imagePrompt }] },
+    });
+
+    for (const part of imageResponse.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        result.generatedImage = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        break;
+      }
+    }
+  } catch (e) {
+    console.error("Image generation failed", e);
+    // Continue without image if generation fails
+  }
+
+  return result;
 }
