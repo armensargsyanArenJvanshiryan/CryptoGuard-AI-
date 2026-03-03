@@ -59,10 +59,14 @@ export default function App() {
   const [showApiModal, setShowApiModal] = useState(false);
   const [showMarketScanModal, setShowMarketScanModal] = useState(false);
   const [showNeuralEngineModal, setShowNeuralEngineModal] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [hasApiKey, setHasApiKey] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState('Auto-detect');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -116,6 +120,9 @@ export default function App() {
   const toggleLogin = () => {
     if (isLoggedIn) {
       setIsLoggedIn(false);
+      setIsAdmin(false);
+      setLoginEmail('');
+      setLoginPassword('');
     } else {
       setShowLoginModal(true);
     }
@@ -123,6 +130,9 @@ export default function App() {
 
   const handleMockLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (loginEmail === 'admin@cryptoguard.ai' && loginPassword === 'admin') {
+      setIsAdmin(true);
+    }
     setIsLoggedIn(true);
     setShowLoginModal(false);
   };
@@ -196,7 +206,7 @@ export default function App() {
                 {isLoggedIn ? (
                   <>
                     <User className="w-4 h-4" />
-                    My Account
+                    {isAdmin ? 'Admin' : 'My Account'}
                   </>
                 ) : (
                   <>
@@ -205,6 +215,14 @@ export default function App() {
                   </>
                 )}
               </button>
+              {isAdmin && (
+                <button 
+                  onClick={() => setShowAdminPanel(true)}
+                  className="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200"
+                >
+                  <ShieldAlert className="w-5 h-5" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -247,6 +265,15 @@ export default function App() {
                     {isLoggedIn ? <LogOut className="w-4 h-4" /> : <User className="w-4 h-4" />}
                     {isLoggedIn ? "Logout" : "Login to CryptoGuard"}
                   </button>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => { setShowAdminPanel(true); setIsMobileMenuOpen(false); }}
+                      className="w-full py-3 mt-2 bg-indigo-600 text-white rounded-xl font-bold flex items-center justify-center gap-2"
+                    >
+                      <ShieldAlert className="w-4 h-4" />
+                      Admin Panel
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -583,6 +610,159 @@ export default function App() {
         </div>
       </main>
 
+      {/* Admin Panel Modal */}
+      <AnimatePresence>
+        {showAdminPanel && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAdminPanel(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-6xl bg-slate-50 rounded-[32px] shadow-2xl overflow-hidden h-[90vh] flex flex-col"
+            >
+              {/* Admin Header */}
+              <div className="bg-slate-900 text-white p-6 sm:p-8 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-900/50">
+                    <ShieldAlert className="text-white w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black tracking-tight">Admin Command Center</h3>
+                    <p className="text-indigo-300 text-sm font-bold uppercase tracking-widest">System Overview</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowAdminPanel(false)}
+                  className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Admin Content */}
+              <div className="flex-1 overflow-y-auto p-6 sm:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-emerald-50 rounded-xl">
+                        <User className="w-6 h-6 text-emerald-600" />
+                      </div>
+                      <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+12%</span>
+                    </div>
+                    <h4 className="text-3xl font-black text-slate-900">2,543</h4>
+                    <p className="text-sm text-slate-500 font-medium mt-1">Active Users</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-indigo-50 rounded-xl">
+                        <Zap className="w-6 h-6 text-indigo-600" />
+                      </div>
+                      <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg">+8%</span>
+                    </div>
+                    <h4 className="text-3xl font-black text-slate-900">45.2k</h4>
+                    <p className="text-sm text-slate-500 font-medium mt-1">API Requests</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-rose-50 rounded-xl">
+                        <AlertTriangle className="w-6 h-6 text-rose-600" />
+                      </div>
+                      <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-lg">-2%</span>
+                    </div>
+                    <h4 className="text-3xl font-black text-slate-900">128</h4>
+                    <p className="text-sm text-slate-500 font-medium mt-1">Threats Blocked</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                      <h4 className="font-bold text-slate-900">Recent System Activity</h4>
+                      <button className="text-xs font-bold text-indigo-600 uppercase tracking-wider hover:text-indigo-700">View All</button>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {[
+                        { action: "User Login", user: "admin@cryptoguard.ai", time: "2 mins ago", status: "Success" },
+                        { action: "API Key Generated", user: "dev_team_alpha", time: "15 mins ago", status: "Success" },
+                        { action: "Threat Detected", user: "System Monitor", time: "1 hour ago", status: "Warning" },
+                        { action: "Database Backup", user: "Automated Task", time: "3 hours ago", status: "Success" },
+                        { action: "Failed Login", user: "unknown_ip_82.11", time: "5 hours ago", status: "Failed" },
+                      ].map((log, i) => (
+                        <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                          <div className="flex items-center gap-4">
+                            <div className={cn(
+                              "w-2 h-2 rounded-full",
+                              log.status === "Success" ? "bg-emerald-500" :
+                              log.status === "Warning" ? "bg-amber-500" : "bg-rose-500"
+                            )} />
+                            <div>
+                              <p className="text-sm font-bold text-slate-900">{log.action}</p>
+                              <p className="text-xs text-slate-500">{log.user}</p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-medium text-slate-400">{log.time}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100">
+                      <h4 className="font-bold text-slate-900">System Health</h4>
+                    </div>
+                    <div className="p-6 space-y-6">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm font-medium">
+                          <span className="text-slate-600">CPU Usage</span>
+                          <span className="text-slate-900">42%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full w-[42%] bg-indigo-600 rounded-full" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm font-medium">
+                          <span className="text-slate-600">Memory Allocation</span>
+                          <span className="text-slate-900">68%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full w-[68%] bg-emerald-500 rounded-full" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm font-medium">
+                          <span className="text-slate-600">API Rate Limits</span>
+                          <span className="text-slate-900">24%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full w-[24%] bg-amber-500 rounded-full" />
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4 grid grid-cols-2 gap-4">
+                        <button className="p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-sm font-bold text-slate-600 transition-colors border border-slate-200">
+                          Clear Cache
+                        </button>
+                        <button className="p-3 bg-slate-50 hover:bg-rose-50 rounded-xl text-sm font-bold text-slate-600 hover:text-rose-600 transition-colors border border-slate-200 hover:border-rose-200">
+                          Restart Services
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Login Modal */}
       <AnimatePresence>
         {showLoginModal && (
@@ -615,6 +795,8 @@ export default function App() {
                     <input 
                       type="email" 
                       required
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="name@example.com"
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none font-medium"
                     />
@@ -624,6 +806,8 @@ export default function App() {
                     <input 
                       type="password" 
                       required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
                       placeholder="••••••••"
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none font-medium"
                     />
